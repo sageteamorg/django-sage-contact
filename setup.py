@@ -5,7 +5,7 @@ with open("README.md", encoding="utf-8") as f:
 
 setup(
     name="django_sage_contact",
-    version="0.4.5",
+    version="0.1.1",
     author="Sepehr Akbarzadeh",
     author_email="sepehr@sageteam.org",
     description="Django package to handle user contact information and contact form.",
@@ -24,5 +24,5 @@ setup(
         "Operating System :: OS Independent",
         "Intended Audience :: Developers",
     ],
-    python_requires=">=3.11",
+    python_requires=">=3.8",
 )
