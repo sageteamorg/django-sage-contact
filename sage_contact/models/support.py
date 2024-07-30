@@ -10,11 +10,12 @@ from django.core.validators import (
 )
 
 from phonenumber_field.modelfields import PhoneNumberField
+from polymorphic.models import PolymorphicModel, PolymorphicManager
 from sage_tools.mixins.models.base import TimeStampMixin
 from sage_contact.constants.choices import ContactMethods, ContactReasons
 
 
-class SupportRequestBase(TimeStampMixin):
+class SupportRequestBase(TimeStampMixin, PolymorphicModel):
     subject = models.CharField(
         _("Subject"),
         max_length=100,
@@ -61,7 +62,7 @@ class SupportRequestBase(TimeStampMixin):
         ]
     )
 
-    objects = models.Manager()
+    objects = PolymorphicManager()
 
     class Meta:
         verbose_name = _("Basic Contact")

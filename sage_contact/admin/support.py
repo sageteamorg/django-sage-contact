@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.utils.translation import gettext_lazy as _
 
+from polymorphic.admin import PolymorphicParentModelAdmin, PolymorphicChildModelAdmin
+
 from sage_contact.models import (
     SupportRequestBase,
     SupportRequestWithLocation,
@@ -8,8 +10,8 @@ from sage_contact.models import (
     FullSupportRequest
 )
 
-@admin.register(SupportRequestBase)
-class SupportRequestBaseAdmin(admin.ModelAdmin):
+class SupportRequestBaseChildAdmin(PolymorphicChildModelAdmin, admin.ModelAdmin):
+    base_model = SupportRequestBase
     search_fields = [
         'subject',
         'full_name',
@@ -42,8 +44,43 @@ class SupportRequestBaseAdmin(admin.ModelAdmin):
     )
 
 
+@admin.register(SupportRequestBase)
+class SupportRequestBaseParentAdmin(PolymorphicParentModelAdmin):
+    base_model = SupportRequestBase
+    child_models = (
+        SupportRequestWithPhone,
+        SupportRequestWithLocation,
+        FullSupportRequest,
+    )
+    list_display = [
+        'subject',
+        'full_name',
+        'email',
+        'created_at',
+        'modified_at',
+        'polymorphic_ctype',
+    ]
+    list_filter = [
+        'created_at',
+        'modified_at',
+        'polymorphic_ctype',
+    ]
+    search_fields = [
+        'subject',
+        'full_name',
+        'email'
+    ]
+    search_help_text = _("Search by subject, full name, or email")
+    save_on_top = True
+    readonly_fields = [
+        'created_at',
+        'modified_at'
+    ]
+
+
 @admin.register(SupportRequestWithPhone)
-class SupportRequestWithPhoneAdmin(SupportRequestBaseAdmin):
+class SupportRequestWithPhoneAdmin(SupportRequestBaseChildAdmin):
+    base_model = SupportRequestWithPhone
     list_display = [
         'subject',
         'full_name',
@@ -63,7 +100,8 @@ class SupportRequestWithPhoneAdmin(SupportRequestBaseAdmin):
 
 
 @admin.register(SupportRequestWithLocation)
-class SupportRequestWithLocationAdmin(SupportRequestBaseAdmin):
+class SupportRequestWithLocationAdmin(SupportRequestBaseChildAdmin):
+    base_model = SupportRequestWithLocation
     list_display = [
         'subject',
         'full_name',
@@ -83,8 +121,7 @@ class SupportRequestWithLocationAdmin(SupportRequestBaseAdmin):
                 'phone_number',
                 'message',
                 'country',
-                'ip_address',
-                'ip_country'
+                'ip_address'
             )
         }),
         (_('Timestamps'), {
@@ -97,7 +134,8 @@ class SupportRequestWithLocationAdmin(SupportRequestBaseAdmin):
 
 
 @admin.register(FullSupportRequest)
-class FullSupportRequestAdmin(SupportRequestBaseAdmin):
+class FullSupportRequestAdmin(SupportRequestBaseChildAdmin):
+    base_model = FullSupportRequest
     list_display = [
         'subject',
         'full_name',
@@ -113,7 +151,6 @@ class FullSupportRequestAdmin(SupportRequestBaseAdmin):
     ]
     autocomplete_fields = (
         "user",
-        # "country"
     )
     fieldsets = (
         (_('Contact Information'), {
@@ -125,7 +162,6 @@ class FullSupportRequestAdmin(SupportRequestBaseAdmin):
                 'message',
                 'country',
                 'ip_address',
-                'ip_country',
                 'user',
                 'contacted_before',
                 'contact_reason',
