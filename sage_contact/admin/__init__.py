@@ -1,5 +1,5 @@
 from .support import (
-    SupportRequestBaseAdmin,
+    SupportRequestBaseParentAdmin,
     SupportRequestWithPhoneAdmin,
     SupportRequestWithLocationAdmin,
     FullSupportRequestAdmin
