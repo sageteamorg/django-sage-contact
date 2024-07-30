@@ -1,7 +1,14 @@
 from django.conf import settings
 from django.db import models
-from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
+from django.utils.translation import gettext_lazy as _
+from django.core.validators import (
+    MaxLengthValidator,
+    MinLengthValidator,
+    RegexValidator,
+    EmailValidator
+)
+
 from phonenumber_field.modelfields import PhoneNumberField
 from sage_tools.mixins.models.base import TimeStampMixin
 from sage_contact.constants.choices import ContactMethods, ContactReasons
@@ -13,13 +20,25 @@ class SupportRequestBase(TimeStampMixin):
         max_length=100,
         help_text=_("The main topic of your message."),
         db_comment="The subject of the contact message.",
+        validators=[
+            MinLengthValidator(1, message=_("The subject cannot be empty.")),
+            MaxLengthValidator(100, message=_("The subject must be 100 characters or fewer."))
+        ]
     )
 
     full_name = models.CharField(
         _("Full Name"),
-        max_length=150,
+        max_length=100,
         help_text=_("Your complete name as you'd like us to address you."),
         db_comment="The full name of the person contacting.",
+        validators=[
+            MinLengthValidator(1, message=_("The full name cannot be empty.")),
+            MaxLengthValidator(100, message=_("The full name must be 100 characters or fewer.")),
+            RegexValidator(
+                r'^[a-zA-Z]+([ \'\-][a-zA-Z]+)*$',
+                _('Enter a valid name. The name can only contain letters, spaces, hyphens, and apostrophes. Examples: John Doe, Mary-Jane O\'Connor.')
+            )
+        ]
     )
 
     email = models.EmailField(
@@ -27,12 +46,19 @@ class SupportRequestBase(TimeStampMixin):
         max_length=254,
         help_text=_("Your email address where we can send a reply."),
         db_comment="The email address of the person contacting.",
+        validators=[
+            EmailValidator(message=_("Enter a valid email address.")),
+            MaxLengthValidator(254, message=_("The email must be 254 characters or fewer."))
+        ]
     )
 
     message = models.TextField(
         _("Message"),
         help_text=_("The detailed message or inquiry you wish to submit."),
         db_comment="The contact message content.",
+        validators=[
+            MinLengthValidator(1, message=_("The message cannot be empty."))
+        ]
     )
 
     objects = models.Manager()
@@ -41,7 +67,7 @@ class SupportRequestBase(TimeStampMixin):
         verbose_name = _("Basic Contact")
         verbose_name_plural = _("Basic Contacts")
         default_manager_name = "objects"
-        db_table = "sage_contact_base"
+        db_table = "sage_support_base"
         db_table_comment = "Table to store basic contact information including subject, full name, email, and message."
 
     def __str__(self):
@@ -49,6 +75,7 @@ class SupportRequestBase(TimeStampMixin):
 
     def __repr__(self):
         return f"<SupportRequestBase {self.full_name}>"
+
 
 
 class SupportRequestWithPhone(SupportRequestBase):
@@ -61,7 +88,7 @@ class SupportRequestWithPhone(SupportRequestBase):
     class Meta:
         verbose_name = _("Contact With Phone")
         verbose_name_plural = _("Contacts With Phone")
-        db_table = "sage_contact_with_phone"
+        db_table = "sage_support_with_phone"
         db_table_comment = "Table to store contact information including phone number along with basic contact details."
 
 
@@ -82,19 +109,10 @@ class SupportRequestWithLocation(SupportRequestWithPhone):
         db_comment="The IP address from which the contact form was submitted.",
     )
 
-    ip_country = models.CharField(
-        _("IP Country"),
-        max_length=255,
-        blank=True,
-        null=True,
-        help_text=_("The country derived from the IP address."),
-        db_comment="The country derived from the IP address.",
-    )
-
     class Meta:
         verbose_name = _("Contact With Location")
         verbose_name_plural = _("Contacts With Location")
-        db_table = "sage_contact_with_location"
+        db_table = "sage_support_with_location"
         db_table_comment = "Table to store contact information including location details along with phone and basic contact details."
 
 
@@ -134,5 +152,5 @@ class FullSupportRequest(SupportRequestWithLocation):
     class Meta:
         verbose_name = _("Full Contact")
         verbose_name_plural = _("Full Contacts")
-        db_table = "sage_full_contact"
+        db_table = "sage_full_support"
         db_table_comment = "Table to store complete contact information including user reference, contact history, reason for contact, preferred contact method, and all details from location, phone, and basic contact."
