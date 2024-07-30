@@ -6,3 +6,6 @@ class SageContactConfig(AppConfig):
     default_auto_field = "django.db.models.BigAutoField"
     name = "sage_contact"
     verbose_name = _("Sage Contact")
+
+    def ready(self) -> None:
+        import sage_contact.signals

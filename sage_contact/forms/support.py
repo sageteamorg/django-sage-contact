@@ -1,3 +1,4 @@
+import logging
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
@@ -7,6 +8,8 @@ from sage_contact.models import (
     SupportRequestWithPhone,
     FullSupportRequest
 )
+
+logger = logging.getLogger(__name__)
 
 
 class SupportRequestForm(forms.ModelForm):
@@ -88,7 +91,7 @@ class SupportRequestWithPhoneForm(SupportRequestForm):
 class SupportRequestWithLocationForm(SupportRequestWithPhoneForm):
     class Meta(SupportRequestWithPhoneForm.Meta):
         model = SupportRequestWithLocation
-        fields = SupportRequestWithPhoneForm.Meta.fields + ['country', 'ip_address']
+        fields = SupportRequestWithPhoneForm.Meta.fields
         widgets = {
             **SupportRequestWithPhoneForm.Meta.widgets,
             'country': forms.Select(attrs={
@@ -112,10 +115,14 @@ class SupportRequestWithLocationForm(SupportRequestWithPhoneForm):
         }
 
 class FullSupportRequestForm(SupportRequestWithLocationForm):
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+
     class Meta(SupportRequestWithLocationForm.Meta):
         model = FullSupportRequest
         fields = SupportRequestWithLocationForm.Meta.fields + [
-            'user', 'contacted_before', 'contact_reason', 'preferred_contact_method'
+            'contact_reason', 'preferred_contact_method'
         ]
         widgets = {
             **SupportRequestWithLocationForm.Meta.widgets,
@@ -148,3 +155,16 @@ class FullSupportRequestForm(SupportRequestWithLocationForm):
                 'invalid_choice': _('Select a valid preferred contact method.'),
             },
         }
+
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        if self.request is None:
+            logger.warning(
+                "The request argument is empty. Ensure that the form is instantiated "
+                "with the request object."
+            )
+        if self.request and self.request.user.is_authenticated:
+            instance.user = self.request.user
+        if commit:
+            instance.save()
+        return instance
