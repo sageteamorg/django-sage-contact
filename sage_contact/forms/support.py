@@ -2,6 +2,8 @@ import logging
 from django import forms
 from django.utils.translation import gettext_lazy as _
 
+from .mixins import GeoLocationMixin
+
 from sage_contact.models import (
     SupportRequestBase,
     SupportRequestWithLocation,
@@ -65,7 +67,7 @@ class SupportRequestForm(forms.ModelForm):
         }
 
 
-class SupportRequestWithPhoneForm(SupportRequestForm):
+class SupportRequestWithPhoneForm(GeoLocationMixin, SupportRequestForm):
     class Meta(SupportRequestForm.Meta):
         model = SupportRequestWithPhone
         fields = SupportRequestForm.Meta.fields + ['phone_number']
@@ -87,8 +89,26 @@ class SupportRequestWithPhoneForm(SupportRequestForm):
             },
         }
 
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        if self.request is None:
+            logger.warning(
+                "The request argument is empty. Ensure that the form is instantiated "
+                "with the request object."
+            )
+        if self.request:
+            self.set_ip_address(instance)
+            self.set_country_from_ip(instance)
+        if commit:
+            instance.save()
+        return instance
+
 
 class SupportRequestWithLocationForm(SupportRequestWithPhoneForm):
+    def __init__(self, *args, **kwargs):
+        self.request = kwargs.pop('request', None)
+        super().__init__(*args, **kwargs)
+
     class Meta(SupportRequestWithPhoneForm.Meta):
         model = SupportRequestWithLocation
         fields = SupportRequestWithPhoneForm.Meta.fields
@@ -115,9 +135,6 @@ class SupportRequestWithLocationForm(SupportRequestWithPhoneForm):
         }
 
 class FullSupportRequestForm(SupportRequestWithLocationForm):
-    def __init__(self, *args, **kwargs):
-        self.request = kwargs.pop('request', None)
-        super().__init__(*args, **kwargs)
 
     class Meta(SupportRequestWithLocationForm.Meta):
         model = FullSupportRequest
@@ -163,8 +180,14 @@ class FullSupportRequestForm(SupportRequestWithLocationForm):
                 "The request argument is empty. Ensure that the form is instantiated "
                 "with the request object."
             )
-        if self.request and self.request.user.is_authenticated:
-            instance.user = self.request.user
+        if self.request:
+            self.set_user(instance)
+            self.set_ip_address(instance)
+            self.set_country_from_ip(instance)
         if commit:
             instance.save()
         return instance
+
+    def set_user(self, instance):
+        if self.request.user.is_authenticated:
+            instance.user = self.request.user
