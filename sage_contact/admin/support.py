@@ -47,6 +47,7 @@ class SupportRequestBaseChildAdmin(PolymorphicChildModelAdmin, admin.ModelAdmin)
 @admin.register(SupportRequestBase)
 class SupportRequestBaseParentAdmin(SupportRequestBaseChildAdmin):
     base_model = SupportRequestBase
+    show_in_index = True
     child_models = (
         SupportRequestWithPhone,
         SupportRequestWithLocation,
@@ -81,6 +82,7 @@ class SupportRequestBaseParentAdmin(SupportRequestBaseChildAdmin):
 @admin.register(SupportRequestWithPhone)
 class SupportRequestWithPhoneAdmin(SupportRequestBaseChildAdmin):
     base_model = SupportRequestWithPhone
+    show_in_index = True
     list_display = [
         'subject',
         'full_name',
@@ -102,6 +104,7 @@ class SupportRequestWithPhoneAdmin(SupportRequestBaseChildAdmin):
 @admin.register(SupportRequestWithLocation)
 class SupportRequestWithLocationAdmin(SupportRequestBaseChildAdmin):
     base_model = SupportRequestWithLocation
+    show_in_index = True
     list_display = [
         'subject',
         'full_name',
@@ -135,6 +138,7 @@ class SupportRequestWithLocationAdmin(SupportRequestBaseChildAdmin):
 
 @admin.register(FullSupportRequest)
 class FullSupportRequestAdmin(SupportRequestBaseChildAdmin):
+    show_in_index = True
     base_model = FullSupportRequest
     list_display = [
         'subject',
