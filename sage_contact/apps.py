@@ -9,3 +9,4 @@ class SageContactConfig(AppConfig):
 
     def ready(self) -> None:
         import sage_contact.signals
+        import sage_contact.settings.check
