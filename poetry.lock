@@ -648,6 +648,20 @@ phonenumbers = ["phonenumbers (>=7.0.2)"]
 phonenumberslite = ["phonenumberslite (>=7.0.2)"]
 
 [[package]]
+name = "django-polymorphic"
+version = "3.1.0"
+description = "Seamless polymorphic inheritance for Django models"
+optional = false
+python-versions = "*"
+files = [
+    {file = "django-polymorphic-3.1.0.tar.gz", hash = "sha256:d6955b5308bf6e41dcb22ba7c96f00b51dfa497a8a5ab1e9c06c7951bf417bf8"},
+    {file = "django_polymorphic-3.1.0-py3-none-any.whl", hash = "sha256:08bc4f4f4a773a19b2deced5a56deddd1ef56ebd15207bf4052e2901c25ef57e"},
+]
+
+[package.dependencies]
+Django = ">=2.1"
+
+[[package]]
 name = "docformatter"
 version = "1.7.5"
 description = "Formats docstrings to follow PEP 257"
@@ -2002,10 +2016,5 @@ test = ["big-O", "importlib-resources", "jaraco.functools", "jaraco.itertools", 
 
 [metadata]
 lock-version = "2.0"
-<<<<<<< Updated upstream
 python-versions = ">=3.8,<4.0"
-content-hash = "023e11dc386bdac931eac0de4fb6d690576ba756c5b5353aaf29fcdcc88a88c7"
-=======
-python-versions = "^3.12"
-content-hash = "187b7ddd6b65e637fca9dd2101195c27b45ec80483aa14da859a7f2f38e97680"
->>>>>>> Stashed changes
+content-hash = "5bdec5a40f340087f92091f653721764f9b8be64e30cc9ae34572b59280a174e"

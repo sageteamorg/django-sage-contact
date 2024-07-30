@@ -11,6 +11,7 @@ python = ">=3.8,<4.0"
 django = ">=4.2,<6.0"
 django-phonenumber-field = {extras = ["phonenumbers"], version = "^8.0.0"}
 django-countries = "^7.6.1"
+django-polymorphic = "^3.1.0"
 
 [tool.poetry.group.dev.dependencies]
 black = ">=23.3.0"  
