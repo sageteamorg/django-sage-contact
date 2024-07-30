@@ -45,7 +45,7 @@ class SupportRequestBaseChildAdmin(PolymorphicChildModelAdmin, admin.ModelAdmin)
 
 
 @admin.register(SupportRequestBase)
-class SupportRequestBaseParentAdmin(PolymorphicParentModelAdmin):
+class SupportRequestBaseParentAdmin(SupportRequestBaseChildAdmin):
     base_model = SupportRequestBase
     child_models = (
         SupportRequestWithPhone,
