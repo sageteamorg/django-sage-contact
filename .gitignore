@@ -123,6 +123,7 @@ jwt-key.pub
 .docker
 
 kernel/
+sage_tools/
 manage.py
 
 docs/sage_painless/
