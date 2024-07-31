@@ -4,6 +4,12 @@ from django.db import models
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
 from sage_contact.constants.choices import Prefix
+from sage_contact.repository.manager.contact import (
+    LabelManager,
+    ContactLabelManager,
+    ContactManager,
+    CustomFieldManager,
+)
 
 
 class Label(models.Model):
@@ -20,9 +26,12 @@ class Label(models.Model):
         db_comment="Unique name for the label",
     )
 
+    objects = LabelManager()
+
     class Meta:
         verbose_name = _("Label")
         verbose_name_plural = _("Labels")
+        default_manager_name = "objects"
         db_table = "sage_label"
         db_table_comment = "Labels help in organizing contacts into groups."
 
@@ -180,9 +189,12 @@ class Contact(models.Model):
         db_comment="URL or path to the contact's photo",
     )
 
+    objects = ContactManager()
+
     class Meta:
         verbose_name = _("Contact")
         verbose_name_plural = _("Contacts")
+        default_manager_name = "objects"
         db_table = "sage_contact"
         db_table_comment = "Table to store contact details similar to Google Contacts."
 
@@ -209,9 +221,12 @@ class CustomField(models.Model):
         db_comment="Custom field value",
     )
 
+    objects = CustomFieldManager()
+
     class Meta:
         verbose_name = _("Custom Field")
         verbose_name_plural = _("Custom Fields")
+        default_manager_name = "objects"
         db_table = "sage_customfield"
         db_table_comment = (
             "Custom fields allow additional user-defined information for each contact."
@@ -239,10 +254,13 @@ class ContactLabel(models.Model):
         db_comment="Foreign key to Label",
     )
 
+    objects = ContactLabelManager()
+
     class Meta:
         unique_together = ["contact", "label"]
         verbose_name = _("Contact Label")
         verbose_name_plural = _("Contact Labels")
+        default_manager_name = "objects"
         db_table = "sage_contactlabel"
         db_table_comment = (
             "Table to manage the many-to-many relationship between contacts and labels."
