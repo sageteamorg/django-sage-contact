@@ -1,6 +1,3 @@
-from .support import (
-    SupportRequestForm,
-    FullSupportRequestForm,
-    SupportRequestWithPhoneForm,
-    SupportRequestWithLocationForm,
-)
+from .support import (FullSupportRequestForm, SupportRequestForm,
+                      SupportRequestWithLocationForm,
+                      SupportRequestWithPhoneForm)
