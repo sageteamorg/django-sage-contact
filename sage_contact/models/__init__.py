@@ -1,6 +1,2 @@
-from .support import (
-    SupportRequestBase,
-    SupportRequestWithLocation,
-    SupportRequestWithPhone,
-    FullSupportRequest
-)
+from .support import (FullSupportRequest, SupportRequestBase,
+                      SupportRequestWithLocation, SupportRequestWithPhone)

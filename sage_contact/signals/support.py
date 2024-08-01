@@ -2,9 +2,10 @@ import os
 from email.utils import make_msgid
 
 from django.conf import settings
-from django.dispatch import receiver
-from django.core.mail import EmailMessage
 from django.contrib.sites.models import Site
+from django.core.mail import EmailMessage
+from django.db.models.signals import post_save, pre_save
+from django.dispatch import receiver
 from django.template.loader import render_to_string
 from django.db.models.signals import pre_save, post_save
 from sage_contact.constants.settings import (
@@ -19,6 +20,7 @@ from sage_contact.constants.settings import (
 from sage_contact.models import (
     FullSupportRequest,
 )
+
 
 
 @receiver(pre_save, sender=FullSupportRequest)

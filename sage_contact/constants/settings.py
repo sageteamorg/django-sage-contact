@@ -1,4 +1,5 @@
 # constants.py
+
 SAGE_CONTACT_GEOIP_PATH = None
 
 # Email

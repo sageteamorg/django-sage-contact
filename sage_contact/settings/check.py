@@ -6,6 +6,7 @@ import os
 
 from .exc import DjangoSageContactError, DjangoSageContactConfigurationError
 
+
 @register()
 def check_django_sage_contact_config(app_configs: Dict[str, Any], **kwargs: Any) -> List[Error]:
     """
@@ -119,6 +120,7 @@ def check_django_sage_contact_config(app_configs: Dict[str, Any], **kwargs: Any)
             Error(
                 str(e),
                 id=f"{e.section_code}.{e.code}",
+
             )
         )
 
