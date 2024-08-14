@@ -13,9 +13,9 @@ class GeoLocationMixin:
             instance.ip_address = ip_address
 
     def set_country_from_ip(self, instance):
-        geoip_path = getattr(settings, "GEOIP_PATH", None)
+        geoip_path = getattr(settings, 'SAGE_CONTACT_GEOIP_PATH', None)
         if geoip_path is None:
-            logger.info("GEOIP_PATH is not set. Skipping country setting.")
+            logger.info('SAGE_CONTACT_GEOIP_PATH is not set. Skipping country setting.')
             return
 
         ip_address = instance.ip_address
