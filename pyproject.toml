@@ -6,6 +6,10 @@ authors = ["Sepehr Akbarzadeh <sa.goldeneagle@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 
+packages = [
+    { include = "sage_contact" }
+]
+
 [tool.poetry.dependencies]
 python = ">=3.8,<4.0"
 django = ">=4.2,<6.0"

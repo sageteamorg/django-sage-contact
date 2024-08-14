@@ -1,17 +1,13 @@
 from django.conf import settings
+from django.core.validators import (EmailValidator, MaxLengthValidator,
+                                    MinLengthValidator, RegexValidator)
 from django.db import models
-from django_countries.fields import CountryField
 from django.utils.translation import gettext_lazy as _
-from django.core.validators import (
-    MaxLengthValidator,
-    MinLengthValidator,
-    RegexValidator,
-    EmailValidator
-)
-
+from django_countries.fields import CountryField
 from phonenumber_field.modelfields import PhoneNumberField
-from polymorphic.models import PolymorphicModel, PolymorphicManager
+from polymorphic.models import PolymorphicManager, PolymorphicModel
 from sage_tools.mixins.models.base import TimeStampMixin
+
 from sage_contact.constants.choices import ContactMethods, ContactReasons
 
 
@@ -23,8 +19,10 @@ class SupportRequestBase(TimeStampMixin, PolymorphicModel):
         db_comment="The subject of the contact message.",
         validators=[
             MinLengthValidator(1, message=_("The subject cannot be empty.")),
-            MaxLengthValidator(100, message=_("The subject must be 100 characters or fewer."))
-        ]
+            MaxLengthValidator(
+                100, message=_("The subject must be 100 characters or fewer.")
+            ),
+        ],
     )
 
     full_name = models.CharField(
@@ -34,12 +32,16 @@ class SupportRequestBase(TimeStampMixin, PolymorphicModel):
         db_comment="The full name of the person contacting.",
         validators=[
             MinLengthValidator(1, message=_("The full name cannot be empty.")),
-            MaxLengthValidator(100, message=_("The full name must be 100 characters or fewer.")),
+            MaxLengthValidator(
+                100, message=_("The full name must be 100 characters or fewer.")
+            ),
             RegexValidator(
-                r'^[a-zA-Z]+([ \'\-][a-zA-Z]+)*$',
-                _('Enter a valid name. The name can only contain letters, spaces, hyphens, and apostrophes. Examples: John Doe, Mary-Jane O\'Connor.')
-            )
-        ]
+                r"^[a-zA-Z]+([ \'\-][a-zA-Z]+)*$",
+                _(
+                    "Enter a valid name. The name can only contain letters, spaces, hyphens, and apostrophes. Examples: John Doe, Mary-Jane O'Connor."
+                ),
+            ),
+        ],
     )
 
     email = models.EmailField(
@@ -49,17 +51,17 @@ class SupportRequestBase(TimeStampMixin, PolymorphicModel):
         db_comment="The email address of the person contacting.",
         validators=[
             EmailValidator(message=_("Enter a valid email address.")),
-            MaxLengthValidator(254, message=_("The email must be 254 characters or fewer."))
-        ]
+            MaxLengthValidator(
+                254, message=_("The email must be 254 characters or fewer.")
+            ),
+        ],
     )
 
     message = models.TextField(
         _("Message"),
         help_text=_("The detailed message or inquiry you wish to submit."),
         db_comment="The contact message content.",
-        validators=[
-            MinLengthValidator(1, message=_("The message cannot be empty."))
-        ]
+        validators=[MinLengthValidator(1, message=_("The message cannot be empty."))],
     )
 
     objects = PolymorphicManager()
@@ -76,7 +78,6 @@ class SupportRequestBase(TimeStampMixin, PolymorphicModel):
 
     def __repr__(self):
         return f"<SupportRequestBase {self.full_name}>"
-
 
 
 class SupportRequestWithPhone(SupportRequestBase):
@@ -97,7 +98,9 @@ class SupportRequestWithLocation(SupportRequestWithPhone):
     country = CountryField(
         _("Country"),
         blank_label="(select country)",
-        help_text=_("Select the country you are contacting us from. Useful for regional marketing campaigns and statistics."),
+        help_text=_(
+            "Select the country you are contacting us from. Useful for regional marketing campaigns and statistics."
+        ),
         db_comment="The country of the person contacting.",
     )
 
@@ -106,7 +109,9 @@ class SupportRequestWithLocation(SupportRequestWithPhone):
         unpack_ipv4=True,
         blank=True,
         null=True,
-        help_text=_("For internal use only. Your IP address is recorded for security and demographic purposes."),
+        help_text=_(
+            "For internal use only. Your IP address is recorded for security and demographic purposes."
+        ),
         db_comment="The IP address from which the contact form was submitted.",
     )
 
@@ -123,14 +128,18 @@ class FullSupportRequest(SupportRequestWithLocation):
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        help_text=_("If you are a registered user, this field links your account to the contact form."),
+        help_text=_(
+            "If you are a registered user, this field links your account to the contact form."
+        ),
         db_comment="A reference to the User model if the contact is made by a registered user.",
     )
 
     contacted_before = models.BooleanField(
         _("Contacted Before"),
         default=False,
-        help_text=_("Check this box if you have made previous contact. It helps us track our ongoing relationship with you."),
+        help_text=_(
+            "Check this box if you have made previous contact. It helps us track our ongoing relationship with you."
+        ),
         db_comment="Indicates whether the person has contacted the company before.",
     )
 
@@ -138,7 +147,9 @@ class FullSupportRequest(SupportRequestWithLocation):
         _("Reason for Contact"),
         max_length=200,
         choices=ContactReasons.choices,
-        help_text=_("Specify the reason for your contact. This helps us to direct your query to the appropriate team."),
+        help_text=_(
+            "Specify the reason for your contact. This helps us to direct your query to the appropriate team."
+        ),
         db_comment="The reason for the contact, used to categorize and prioritize the contact.",
     )
 
@@ -146,7 +157,9 @@ class FullSupportRequest(SupportRequestWithLocation):
         _("Preferred Contact Method"),
         max_length=50,
         choices=ContactMethods.choices,
-        help_text=_("Indicate your preferred method of communication. We respect your choice and will contact you accordingly."),
+        help_text=_(
+            "Indicate your preferred method of communication. We respect your choice and will contact you accordingly."
+        ),
         db_comment="The contact's preferred method of communication.",
     )
 

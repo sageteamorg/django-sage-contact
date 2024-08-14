@@ -1,9 +1,10 @@
+from django.contrib import messages
 from django.core.exceptions import ImproperlyConfigured
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.contrib import messages
 from django.utils.translation import gettext_lazy as _
 from django.views.generic.base import ContextMixin
+
 
 class SupportRequestViewMixin(ContextMixin):
     """
@@ -15,8 +16,10 @@ class SupportRequestViewMixin(ContextMixin):
 
     support_form_class = None
     support_success_url_name = None
-    support_form_context_name = 'contact_form'
-    support_form_success_message = _("Thank you for contacting us! We will be in touch soon.")
+    support_form_context_name = "contact_form"
+    support_form_success_message = _(
+        "Thank you for contacting us! We will be in touch soon."
+    )
     template_name = None
 
     def __init__(self, *args, **kwargs):
@@ -75,12 +78,13 @@ class SupportRequestViewMixin(ContextMixin):
         if contact_form.is_valid():
             try:
                 contact_form.save()
-                messages.success(
-                    request, self.get_support_form_success_message()
-                )
+                messages.success(request, self.get_support_form_success_message())
                 return redirect(self.get_success_url())
             except Exception as e:
-                messages.error(request, _("There was an error processing your request. Please try again."))
+                messages.error(
+                    request,
+                    _("There was an error processing your request. Please try again."),
+                )
                 # Log the exception, e.g., logging.error(e)
         context = self.get_context_data(**kwargs)
         context[self.support_form_context_name] = contact_form

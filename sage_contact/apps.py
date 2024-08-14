@@ -8,5 +8,5 @@ class SageContactConfig(AppConfig):
     verbose_name = _("Sage Contact")
 
     def ready(self) -> None:
-        import sage_contact.signals
         import sage_contact.settings.check
+        import sage_contact.signals
