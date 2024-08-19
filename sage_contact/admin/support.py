@@ -11,6 +11,12 @@ from sage_contact.models import (
 
 class SupportRequestBaseChildAdmin(PolymorphicParentModelAdmin, admin.ModelAdmin):
     base_model = SupportRequestBase
+    child_models = (
+        FullSupportRequest,
+        SupportRequestWithLocation,
+        SupportRequestWithPhone,
+        FullSupportRequest
+    )
     search_fields = ["subject", "full_name", "email"]
     search_help_text = _("Search by subject, full name, or email")
     list_display = ["subject", "full_name", "email", "created_at", "modified_at", "get_request_type"]
