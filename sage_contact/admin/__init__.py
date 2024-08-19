@@ -1,3 +1,6 @@
-from .support import (FullSupportRequestAdmin, SupportRequestBaseParentAdmin,
-                      SupportRequestWithLocationAdmin,
-                      SupportRequestWithPhoneAdmin)
+from .support import (
+    FullSupportRequestAdmin,
+    SupportRequestBaseParentAdmin,
+    SupportRequestWithLocationAdmin,
+    SupportRequestWithPhoneAdmin,
+)
