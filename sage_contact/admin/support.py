@@ -19,7 +19,7 @@ class SupportRequestBaseChildAdmin(PolymorphicParentModelAdmin, admin.ModelAdmin
     )
     search_fields = ["subject", "full_name", "email"]
     search_help_text = _("Search by subject, full name, or email")
-    list_display = ["subject", "full_name", "email", "created_at", "modified_at", "get_request_type"]
+    list_display = ["subject","get_request_type","full_name", "email", "created_at", "modified_at"]
     list_filter = ["created_at", "modified_at"]
     save_on_top = True
     readonly_fields = ["created_at", "modified_at"]
@@ -30,12 +30,9 @@ class SupportRequestBaseChildAdmin(PolymorphicParentModelAdmin, admin.ModelAdmin
         ),
         (_("Timestamps"), {"fields": ("created_at", "modified_at")}),
     )
-
+    @admin.display(description=_("Request Type"))
     def get_request_type(self, obj):
         return obj.get_real_instance_class()._meta.verbose_name
-
-    get_request_type.short_description = _("Request Type")
-
 
 @admin.register(SupportRequestBase)
 class SupportRequestBaseParentAdmin(PolymorphicChildModelAdmin, SupportRequestBaseChildAdmin):
