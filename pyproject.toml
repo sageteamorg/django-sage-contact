@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "django-sage-contact"
-version = "0.1.1"
+version = "0.1.2"
 description = "Django package to handle user contact information and contact form."
 authors = ["Sepehr Akbarzadeh <sa.goldeneagle@gmail.com>"]
 license = "MIT"
